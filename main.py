@@ -132,11 +132,11 @@ def password_strength(username, passwd):
     
     # common_substr_penalty = max(match.size - 3, 0) * 10
     common_substr_penalty = float(match.size)/len(letters) * 30 if match.size > 2 else 0
-    # print min(len(passwd), 16), " * 2"
-    # print min(l/d, d/l), " * 20"
-    # print min(lowercase/uppercase, uppercase/lowercase), " * 10"
-    # print len(passwd) - d - l, " * 8"
-    # print 0 - common_substr_penalty
+    # print( min(len(passwd), 16), " * 2")
+    # print( min(l/d, d/l), " * 20")
+    # print( min(lowercase/uppercase, uppercase/lowercase), " * 10")
+    # print( len(passwd) - d - l, " * 8")
+    # print( 0 - common_substr_penalty)
     letters_digit_ratio = min(l/d, d/l) if l >0 and d > 0 else 0
     lower_upper_ratio = min(lowercase/uppercase, uppercase/lowercase) if lowercase > 0 and uppercase > 0 else 0
     score =     min(len(passwd), 12)*2 \
@@ -160,9 +160,9 @@ def parse_request():
 
     data = request.args  # data is empty
     # need posted data here
-    print request.args
-    print request.form
-    # print "field" in request.form.keys()
+    print( request.args)
+    print( request.form)
+    # print( "field" in request.form.keys())
     if "field" in request.form.keys() and request.form['field'] == "fuzzed":
         raise Exception('Fuzzed')
     
