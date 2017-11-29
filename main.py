@@ -184,5 +184,5 @@ def parse_request():
         return "You have logged in successfully"
     
     return "This is the login url. You are not authenticated"
-
-app.run()
+if __name__ == "__main__":
+	app.run()
