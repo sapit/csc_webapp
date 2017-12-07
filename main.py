@@ -134,7 +134,7 @@ def admin():
     new_pwds = copy.deepcopy(pwds)
     def hide_passwd(passwd):
         l = len(passwd)
-        for i in range(l/2):
+        for i in range(l//2):
             index = random.randint(0, l-1)
             passwd = passwd[:index] + '*' + passwd[index+1:]
         return passwd
