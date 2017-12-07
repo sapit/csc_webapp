@@ -1,75 +1,51 @@
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Flat UI - Free Bootstrap Framework and Theme</title>
-    <meta name="description" content="Flat UI Kit Free is a Twitter Bootstrap Framework design and Theme, this responsive framework includes a PSD and HTML version."/>
-
-    <meta name="viewport" content="width=1000, initial-scale=1.0, maximum-scale=1.0">
-
-    <!-- Loading Bootstrap -->
-    <link href="./static/flat-ui/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Loading Flat UI -->
-    <link href="./static/flat-ui/dist/css/flat-ui.css" rel="stylesheet">
-    <link href="./static/flat-ui/docs/assets/css/demo.css" rel="stylesheet">
-
-    <!-- <link rel="shortcut icon" href="img/favicon.ico"> -->
-
-</head>
-<body>
-    <div class="container">
-        <div style="margin-bottom: 20px" class="row">
+    <head>
+        <meta charset="utf-8">
+        <title>Password validator</title>
+        <meta name="viewport" content="width=1000, initial-scale=1.0, maximum-scale=1.0">
+    
+        <!-- Loading Bootstrap -->
+        <link href="./static/flat-ui/dist/css/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Loading Flat UI -->
+        <link href="./static/flat-ui/dist/css/flat-ui.css" rel="stylesheet">
+        <link href="./static/flat-ui/docs/assets/css/demo.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container">
+            <div style="margin-bottom: 20px" class="row">
                 <img src="./static/password_validator.png" class="img-responsive col-md-2" alt="Password Validator">
                 <h2 style="text-align: center" >Validate your password</h2>
-                <h4 style="text-align: center">Share your score with your friends</h4>
-        </div>
-        <div class="col-md-offset-2">
-            <div style="margin-bottom: 10px" class="row">
-                <form action="{{ url_for('admin') }}" method="post">
-                    <div class="col-md-10" style="padding: 0; padding-right: 2px;">
-                        <input type="text" id="comment" name="comment" placeholder="Comment" class="form-control" />
-                    </div>
-                    <input type="submit" class="btn btn-primary col-md-2" value="Reset">
-                </form>
+                <h4 style="text-align: center">Admin panel </h4>
             </div>
-            <div style="margin-bottom: 10px" class="row">
-                <div class="col-md-4">
-                        <form action="{{ url_for('hello') }}" method="post">
-                            <label for="username">Enter username and password:</label>
-                            <input type="text" id="username" name="username" placeholder="Username" class="form-control" style="margin-bottom: 2px;"/>
-                            <input type="password" id="password" name="password" placeholder="Password" class="form-control" style="margin-bottom: 2px;" />
-                            <input type="submit" class="btn btn-primary btn-block" value="Evaluate">
+            <div class="col-md-offset-2">
+                <div style="margin-bottom: 10px" class="row">
+                    <div class="col-md-4">
+                        <form action="/admin" method="post">
+                            <!-- <input type="text" id="username" name="username" placeholder="Username" class="form-control" style="margin-bottom: 2px;"/>
+                            <input type="password" id="password" name="password" maxlength="16" placeholder="Password" class="form-control" style="margin-bottom: 2px;" /> -->
+                            <label for="credentials">Credentials:</label>
+                            <input type="checkbox" checked data-toggle="switch" name="credentials" id="credentials" />
+                            <label for="comments">Comments:</label>
+                            <input type="checkbox" checked data-toggle="switch" name="comments" id="comments" />
+                            <input type="submit" class="btn btn-primary btn-block" value="Reset">
                         </form>
-                        {% if score %}
-                            <h3> Score: {{ score }}</h3>
-                        {% endif %}
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <label class="col-md-8" for="comment">Enter your comment:</label>
-                <div class="col-md-8">
-                    <form action="{{ url_for('hello') }}" method="post">
-                        <div class="col-md-10" style="padding: 0; padding-right: 2px;">
-                            <input type="text" id="comment" name="comment" placeholder="Comment" class="form-control" />
-                        </div>
-                        <input type="submit" class="btn btn-primary col-md-2" value="Share">
-                    </form>
+    
+                <div class="row" style="margin-top: 20px">
+                    <h3 class="navbar-text">Passwords:</h3>
                 </div>
-            </div>
+    
+                <div class="row comments">
+                    {% for username, password_list in passwords.items() %}
+                        <h5 class='col-md-12'>{{ username }}</h5>
+                        {% for pass in password_list %}
+                            <p class='col-md-offset-1 col-md-11' style="margin-bottom: 5px">{{ pass }}</p>
+                        {% endfor %}
+                    {% endfor %}
 
-            <div class="row" style="margin-top: 20px">
-                <h3 class="navbar-text">Comments:</h3>
-            </div>
-
-            <div class="row comments">
-                {% for comment in comments %}
-                    <p class="col-md-12 navbar-text">{{comment}}</p>
-                {% endfor %}
-                <p class="col-md-12 navbar-text">Signed in as Mark Otto</p>
-                <p class="navbar-text col-md-12">Signed in as Mark Otto</p>
-                <p class="navbar-text col-md-12">Signed in as Mark Otto</p>
+                </div>
             </div>
         </div>
-    </div>
-</body>
-</html>
+    </body>
+    </html>

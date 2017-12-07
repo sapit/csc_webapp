@@ -4,6 +4,8 @@ from flask import render_template
 import re
 from difflib import SequenceMatcher
 from flask import url_for
+import copy
+import random
 
 app = Flask(__name__)
 
@@ -83,13 +85,11 @@ def evaluate_score(request):
 
 
 def add_comment(request):
-    # global comments
     comment = request.form["comment"]
 
     comments.append(comment)
 
 def get_all_comments():
-    # global comments
     comments_html = ""
 
     for comment in reversed(comments):
@@ -123,9 +123,26 @@ def hello():
     return html_page
 
 
-@app.route("/flatui")
-def flatui():
-    return render_template("flat-ui/index.html")
+@app.route("/admin", methods=['GET', 'POST'])
+def admin():
+    global pwds, comments
+    if(request.method == "POST"):
+        if("credentials" in request.form.keys()):
+            pwds = {}
+        if("comments" in request.form.keys()):
+            comments = []
+    new_pwds = copy.deepcopy(pwds)
+    def hide_passwd(passwd):
+        l = len(passwd)
+        for i in range(l/2):
+            index = random.randint(0, l-1)
+            passwd = passwd[:index] + '*' + passwd[index+1:]
+        return passwd
+
+    for user in new_pwds:
+        new_pwds[user] = [hide_passwd(p) for p in new_pwds[user]]
+
+    return render_template("admin.html", passwords=new_pwds)
 
 def password_strength(username, passwd):
     if(username not in pwds.keys()):
@@ -151,13 +168,8 @@ def password_strength(username, passwd):
     match = SequenceMatcher(None, username, passwd)\
                 .find_longest_match(0, len(username), 0, len(passwd))
     
-    # common_substr_penalty = max(match.size - 3, 0) * 10
     common_substr_penalty = float(match.size)/len(letters) * 30 if match.size > 2 else 0
-    # print( min(len(passwd), 16), " * 2")
-    # print( min(l/d, d/l), " * 20")
-    # print( min(lowercase/uppercase, uppercase/lowercase), " * 10")
-    # print( len(passwd) - d - l, " * 8")
-    # print( 0 - common_substr_penalty)
+
     letters_digit_ratio = min(l/d, d/l) if l >0 and d > 0 else 0
     lower_upper_ratio = min(lowercase/uppercase, uppercase/lowercase) if lowercase > 0 and uppercase > 0 else 0
     score =     min(len(passwd), 12)*2 \
@@ -167,43 +179,5 @@ def password_strength(username, passwd):
                 - common_substr_penalty
     return score
 
-@app.route('/login', methods=['GET', 'POST'])
-def parse_request():
-    '''
-    request can have:
-    username: String
-    password: String
-    field: String -- raises exception if its 'fuzzed'
-    age: Int
-    '''
-    username = "username"
-    password = "password"
-
-    data = request.args  # data is empty
-    # need posted data here
-    print( request.args)
-    print( request.form)
-    # print( "field" in request.form.keys())
-    if "field" in request.form.keys() and request.form['field'] == "fuzzed":
-        raise Exception('Fuzzed')
-    
-    
-    sameUsername = (request.form['username'] == username) if request.form['username'] else None
-
-    if request.form['password']:
-        # unsafe password comparison
-        samePass=True
-        for i in range(len(password)):
-            if(request.form['password'][i] != password[i]):
-                samePass=False
-    
-    age=None
-    if request.form['age']:
-        age = int(request.form['age'])
-
-    if sameUsername and samePass:
-        return "You have logged in successfully"
-    
-    return "This is the login url. You are not authenticated"
 if __name__ == "__main__":
 	app.run()
