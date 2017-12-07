@@ -39,7 +39,7 @@ html_page_template = '''
                     <form action="/" method="post">
                         <label for="username">Enter username and password:</label>
                         <input type="text" id="username" name="username" placeholder="Username" class="form-control" style="margin-bottom: 2px;"/>
-                        <input type="password" id="password" name="password" placeholder="Password" class="form-control" style="margin-bottom: 2px;" />
+                        <input type="password" id="password" name="password" maxlength="16" placeholder="Password" class="form-control" style="margin-bottom: 2px;" />
                         <input type="submit" class="btn btn-primary btn-block" value="Evaluate">
                     </form>
                     {{MYSCORE}}
@@ -71,34 +71,55 @@ html_page_template = '''
 '''
 
 
+def evaluate_score(request):
+    username = request.form["username"]
+    password = request.form["password"]
 
-@app.route("/", methods=['GET', 'POST'])
-# @app.route("/index", methods=['GET', 'POST'])
-def hello():
-    global comments
-    score_html = ""
+    score = password_strength(username, password)
+
+    score_html = score_html_template.replace("{{score}}", str(score))
+
+    return score_html
+
+
+def add_comment(request):
+    # global comments
+    comment = request.form["comment"]
+
+    comments.append(comment)
+
+def get_all_comments():
+    # global comments
     comments_html = ""
-    if("username" in request.form.keys() and "password" in request.form.keys()):
-        score = password_strength(request.form["username"], request.form["password"])
-        score_html = score_html_template.replace("{{score}}", str(score))
-        # return render_template("index.html", score=score)
-        # return html_page
 
-    if("comment" in request.form.keys()):
-        comments.append(request.form["comment"])
-        # return render_template("index.html", comments=comments)    
-    
-    
     for comment in reversed(comments):
         comment_html = comment_html_template.replace("{{comment}}", comment)
         comments_html = comments_html + comment_html
-
     
+    return comments_html
+
+
+def create_html_page(score_html, comments_html):
     html_page = html_page_template
     
     html_page = html_page.replace("{{MYSCORE}}", score_html)
     html_page = html_page.replace("{{COMMENTS}}", comments_html)
-    # return render_template("index.html")
+
+    return html_page
+
+
+@app.route("/", methods=['GET', 'POST'])
+def hello():
+    score_html = ""
+    comments_html = ""
+    if("username" in request.form.keys() and "password" in request.form.keys()):
+        score_html = evaluate_score(request)
+
+    if("comment" in request.form.keys()):
+        add_comment(request)
+        
+    comments_html = get_all_comments()
+    html_page = create_html_page(score_html, comments_html)
     return html_page
 
 
